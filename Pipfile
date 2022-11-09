@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+sqlalchemy = "*"
+psycopg2-binary = "*"
+pandas = "*"
+pytest = "*"
+pytest-mock = "*"
+autopep8 = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"
