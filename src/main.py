@@ -20,17 +20,19 @@ from src.modules.suburbs.suburb_transformer import SuburbTransformer
 from src.modules.suburbs.suburb_dataclass import Suburb
 
 from src.modules.addresses.address_transformer import AddressTransformer
-from src.modules.addresses.address_dataclass import Address
+
+from src.modules.agencies.agency_transformer import AgencyTransformer
+
+from src.modules.agents.agent_transformer import AgentTransformer
+
+from src.modules.properties.property_transformer import PropertyTransformer
 
 
 class Etl:
     def __init__(self, engine: Engine, connection: Connection):
         self.engine = engine
         self.connection = connection
-        # agenciesDb = AgenciesDb(engine, connection)
-        # agentsDb = AgentsDb(engine, connection)
         # listingsDb = ListingsDb(engine, connection)
-        # propertiesDb = PropertiesDb(engine, connection)
         self.rawDb = RawDb(engine, connection)
         self.state_transformer = StateTransformer(
             StatesTerritoriesDb(engine, connection))
@@ -38,6 +40,11 @@ class Etl:
             SuburbsDb(engine, connection))
         self.address_transformer = AddressTransformer(
             AddressesDb(engine, connection))
+        self.agency_transformer = AgencyTransformer(
+            AgenciesDb(engine, connection))
+        self.agent_transformer = AgentTransformer(AgentsDb(engine, connection))
+        self.property_transformer = PropertyTransformer(
+            PropertiesDb(engine, connection))
 
     def process_suburb(self, state: str, suburb: str, postcode: str) -> int:
         # get state ID from state table
@@ -48,6 +55,26 @@ class Etl:
                         postcode=postcode)
         return self.suburb_transformer.get_or_create_suburb_id(suburb)
 
+    def process_address(self, suburb_id: int, raw_data: RawListing) -> int:
+        return self.address_transformer.get_or_create_address_id(
+            suburb_id, raw_data.address, raw_data.gps_coordinates, raw_data.google_maps_location_url)
+
+    def process_agency(self, raw_data: RawListing) -> int:
+        return self.agency_transformer.get_or_create_agency_id(
+            raw_data.agency_name, raw_data.agency_logo, raw_data.agency_property_listings_url, raw_data.agency_address)
+
+    def process_agent(self, agency_id: int, agency_name: str, agent_name: str) -> int:
+        return self.agent_transformer.get_or_create_agent_id(agency_id, agency_name, agent_name)
+
+    def process_property(self, address_id: int, raw_data: RawListing) -> int:
+        return self.property_transformer.get_or_create_property_id(
+            address_id=address_id,
+            id_on_tenantapp=raw_data.property_id,
+            num_bedrooms=raw_data.num_bedrooms,
+            num_bathrooms=raw_data.num_bathrooms,
+            num_garages=raw_data.num_garages,
+            property_features=raw_data.property_features)
+
     def run(self):
         # get data from raw
         print("Getting data from raw table...")
@@ -57,12 +84,22 @@ class Etl:
         print(f"Got suburb id: {suburb_id}")
 
         # populate address table with suburb FK
-        address_id = self.address_transformer.get_or_create_address_id(
-            suburb_id, raw_data.address, raw_data.gps_coordinates, raw_data.google_maps_location_url)
-
+        address_id = self.process_address(suburb_id, raw_data)
         print(f"Got address id: {address_id}")
+
         # populate agencies table
-        # populate property table and agent table first
+        agency_id = self.process_agency(raw_data)
+        print(f"Got agency id: {agency_id}")
+
+        # populate agent table
+        agent_id = self.process_agent(
+            agency_id, raw_data.agency_name, raw_data.agent_name)
+        print(f"Got agent id: {agent_id}")
+
+        # populate property table
+        property_id = self.process_property(address_id, raw_data)
+        print(f"Got property id: {property_id}")
+
         # populate listings table
 
 

@@ -1,8 +1,5 @@
 import dataclasses
 
-from src.utils.validate_field_type import validate
-
-
 @dataclasses.dataclass(init=False)
 class Address:
     suburb_id: int

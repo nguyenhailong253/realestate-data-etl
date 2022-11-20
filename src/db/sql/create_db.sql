@@ -16,6 +16,9 @@ create table if not exists transformed.suburbs (
 
 
 ALTER TABLE transformed.states_and_territories ALTER COLUMN state_name TYPE varchar (50);
+ALTER TABLE transformed.real_estate_agencies ADD COLUMN hq_address TEXT;
+ALTER TABLE transformed.real_estate_agents DROP COLUMN listings_url;
+ALTER TABLE IF EXISTS transformed.real_estate_property RENAME TO real_estate_properties;
 
 -- for addresses, ignore addressLine1 or 2 pattern for now, i.e ignore building name and stuff for now
 -- usually line1 is for building name, line 2 is the physical address
@@ -41,7 +44,7 @@ create table if not exists transformed.addresses (
 )
 
 -- Create table for property
-create table if not exists transformed.real_estate_property (
+create table if not exists transformed.real_estate_properties (
 	id bigserial PRIMARY KEY,
 	address_id bigint, -- FK
 	id_on_tenantapp varchar(50),
@@ -74,17 +77,16 @@ create table if not exists transformed.listings (
 create table if not exists transformed.real_estate_agents (
 	id bigserial PRIMARY KEY,
 	agency_id bigint, -- FK
-	agent_name varchar(100),
-	listings_url text
+	agent_name varchar(100), -- null if agent_name == agency_name
 )
 
 -- Create table for real estate agencies
 create table if not exists transformed.real_estate_agencies (
 	id bigserial PRIMARY KEY,
-	hq_address_id bigint, -- FK, the address of the agency office/HQ
 	agency_name varchar(200),
 	logo_url text,
-	listings_url text
+	listings_url text,
+	hq_address text,
 )
 
 -- need to create index for each foreign key

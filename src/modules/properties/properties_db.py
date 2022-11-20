@@ -5,7 +5,7 @@ from sqlalchemy.engine.base import Engine
 from sqlalchemy.engine import Connection
 
 from src.db.db_connection import DbConnection
-from src.db.config import TRANSFORMED_SCHEMA, REAL_ESTATE_PROPERTY_TABLE
+from src.db.config import TRANSFORMED_SCHEMA, REAL_ESTATE_PROPERTIES_TABLE
 
 
 class PropertiesDb:
@@ -17,4 +17,16 @@ class PropertiesDb:
 
     def connect_table(self) -> Table:
         return Table(
-            REAL_ESTATE_PROPERTY_TABLE, self.schema, autoload=True, autoload_with=self.engine)
+            REAL_ESTATE_PROPERTIES_TABLE, self.schema, autoload=True, autoload_with=self.engine)
+
+    def select_one(self,
+                   address_id: int,
+                   id_on_tenantapp: str) -> int:
+        query = select([self.table.columns.id]).where(
+            and_(self.table.columns.address_id == address_id,
+                 self.table.columns.id_on_tenantapp == id_on_tenantapp))
+        return self.conn.execute(query).first()
+
+    def insert_one(self, property_data: dict) -> int:
+        query = insert(self.table).values(property_data)
+        return self.conn.execute(query).inserted_primary_key
