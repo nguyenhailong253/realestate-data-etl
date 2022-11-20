@@ -18,3 +18,13 @@ class SuburbsDb:
     def connect_table(self) -> Table:
         return Table(
             SUBURBS_TABLE, self.schema, autoload=True, autoload_with=self.engine)
+
+    def select_one(self, suburb_name: str, postcode: str) -> int:
+        query = select([self.table.columns.id]).where(
+            and_(self.table.columns.suburb_name == suburb_name,
+                 self.table.columns.postcode == postcode))
+        return self.conn.execute(query).first()
+
+    def insert_one(self, suburb: dict) -> int:
+        query = insert(self.table).values(suburb)
+        return self.conn.execute(query).inserted_primary_key

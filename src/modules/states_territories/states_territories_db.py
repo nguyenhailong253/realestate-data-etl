@@ -14,6 +14,7 @@ class StatesTerritoriesDb:
         self.conn = connection
         self.schema = MetaData(schema=TRANSFORMED_SCHEMA)
         self.table = self.connect_table()
+        self.states = [{**row} for row in self.select_all()]
 
     def connect_table(self) -> Table:
         return Table(

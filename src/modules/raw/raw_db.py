@@ -18,3 +18,8 @@ class RawDb:
     def connect_table(self) -> Table:
         return Table(
             RAW_DATA_TABLE, self.schema, autoload=True, autoload_with=self.engine)
+
+    def select_all(self):
+        # results = [{**row} for row in item]  # https://stackoverflow.com/a/56098483
+        # return self.conn.execute(select([self.table])).fetchall()
+        return self.conn.execute(select([self.table])).first()
