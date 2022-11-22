@@ -2,24 +2,6 @@ version: 2.1
 
 orbs:
   python: circleci/python@2.1.1
-  aws-ecr: circleci/aws-ecr@8.1.3
-
-parameters:
-  num_ads_processed_per_build:
-    type: integer
-    default: 2300 # CircleCI can complete about 2300 ads per hour which is its free-tier runtime limit
-  batch_2_offset:
-    type: integer
-    default: 2300
-  batch_3_offset:
-    type: integer
-    default: 4600
-  batch_4_offset:
-    type: integer
-    default: 6900
-  batch_5_offset:
-    type: integer
-    default: 9200
 
 jobs:
   unit-test:
