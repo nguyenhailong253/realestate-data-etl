@@ -62,10 +62,12 @@ class AddressTransformer:
             if street_type.title() == key or street_type.title() == value:
                 address.street_type = value
                 address.street_type_abbrev = key
-                print(f"Matching street type: {value} - {street_type}")
-        if not address.street_type:
-            raise ValueError(
-                f"Cannot find street type for {street_type} in address {address.display_address}")
+        try:
+            address.street_type
+        except AttributeError as e:
+            print(
+                f"Cannot find street type for {street_type} in address {address.display_address}: {e}")
+            raise
 
     def set_street_name(self, address: Address, street: List[str]):
         street_name = " ".join(street).title()
@@ -76,7 +78,7 @@ class AddressTransformer:
             raise ValueError(
                 f"Address has no numeric values for unit or street number: {address}")
 
-    def normalise_street_data(self, address: Address) -> str:
+    def normalise_street_data(self, address: Address):
         raw_address = self.remove_suburb_and_redundant_words_in_address(
             address.display_address)
 
@@ -87,7 +89,7 @@ class AddressTransformer:
         # Anything in between is street name
         address_components = raw_address.split(" ")
         print(
-            f"Normalising address... address components: {address_components}")
+            f"Normalising address - address components: {address_components}")
 
         self.set_unit_and_street_numbers(address, address_components[0])
 
@@ -103,7 +105,6 @@ class AddressTransformer:
         # https://support.google.com/maps/answer/18539?hl=en&co=GENIE.Platform%3DDesktop#:~:text=of%20a%20place-,On%20your%20computer%2C%20open%20Google%20Maps.,decimal%20format%20at%20the%20top.
         gps = re.sub(GPS_TEXT, "", gps_coordinates).strip()
         latitude_longitude = gps.split(", ")
-        print(f"Latitude & longitude: {latitude_longitude}")
         address.latitude = latitude_longitude[0]
         address.longitude = latitude_longitude[1]
 
@@ -121,8 +122,11 @@ class AddressTransformer:
         self.set_latitude_longitude_data(gps_coordinates, address)
 
         # Check if exist
-        row = self.db.select_one(suburb_id, address.unit_number,
-                                 address.street_number, address.street_name, address.street_type)
+        row = self.db.select_one(address.suburb_id,
+                                 address.unit_number,
+                                 address.street_number,
+                                 address.street_name,
+                                 address.street_type)
         if row:
             print("Address data already existed")
             return {**row}['id']

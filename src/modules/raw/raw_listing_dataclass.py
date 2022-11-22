@@ -32,3 +32,4 @@ class RawListing:
     data_collection_date: str
     agency_name: str
     agency_address: str
+    etl_done: bool

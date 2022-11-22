@@ -21,5 +21,13 @@ class RawDb:
 
     def select_all(self):
         # results = [{**row} for row in item]  # https://stackoverflow.com/a/56098483
-        # return self.conn.execute(select([self.table])).fetchall()
-        return self.conn.execute(select([self.table])).first()
+        query = select([self.table]).where(
+            and_(self.table.columns.off_market == True,
+                 self.table.columns.etl_done == False,
+                 self.table.columns.ad_removed_date != None))  # .limit(1)
+        return self.conn.execute(query).fetchall()
+
+    def update_etl_done_flag(self, raw_listing_id: int):
+        query = update(self.table).values(etl_done=True).where(
+            self.table.columns.id == raw_listing_id)
+        self.conn.execute(query)

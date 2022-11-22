@@ -16,7 +16,7 @@ class AgentTransformer:
         # in this case we keep agent_name as None and just reference agency db record directly
         name = None if agency_name == agent_name else agent_name
         agent = Agent(agency_id, name)
-        row = self.db.select_one(agency_id, name)
+        row = self.db.select_one(agent.agency_id, agent.agent_name)
         if row:
             print("Agent data already existed")
             return {**row}['id']

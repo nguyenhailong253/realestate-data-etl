@@ -13,7 +13,7 @@ class AgencyTransformer:
                                 hq_address: str) -> int:
         agency = Agency(hq_address=hq_address, agency_name=agency_name,
                         logo_url=logo_url, listings_url=listings_url)
-        row = self.db.select_one(agency_name, listings_url)
+        row = self.db.select_one(agency.agency_name, agency.listings_url)
         if row:
             print("Agency data already existed")
             return {**row}['id']

@@ -16,8 +16,9 @@ class PropertyTransformer:
                                   num_garages: str,
                                   property_features: List[str]) -> int:
         property_data = Property(address_id, id_on_tenantapp, num_bedrooms,
-                         num_bathrooms, num_garages, property_features)
-        row = self.db.select_one(address_id, id_on_tenantapp)
+                                 num_bathrooms, num_garages, property_features)
+        row = self.db.select_one(
+            property_data.address_id, property_data.id_on_tenantapp)
         if row:
             print("Property data already existed")
             return {**row}['id']

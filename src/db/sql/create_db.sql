@@ -17,6 +17,7 @@ create table if not exists transformed.suburbs (
 
 ALTER TABLE transformed.states_and_territories ALTER COLUMN state_name TYPE varchar (50);
 ALTER TABLE transformed.real_estate_agencies ADD COLUMN hq_address TEXT;
+ALTER TABLE raw.propertylistings ADD COLUMN etl_done BOOLEAN DEFAULT FALSE;
 ALTER TABLE transformed.real_estate_agents DROP COLUMN listings_url;
 ALTER TABLE IF EXISTS transformed.real_estate_property RENAME TO real_estate_properties;
 
