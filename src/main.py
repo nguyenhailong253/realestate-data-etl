@@ -111,12 +111,14 @@ class Etl:
         print("Getting data from raw table...")
         rows = self.rawDb.select_all()
         print(f"Found {len(rows)} rows without ETL done\n")
+        count = 0
         for row in rows:
+            count += 1
             start_time = time.time()
             raw_data = RawListing(**row)
             print("\n\n=================================================")
             print(
-                f"Starting ETL process for property id: {raw_data.property_id}, at row id: {raw_data.id}")
+                f"{count}. Starting ETL process for property id: {raw_data.property_id}, at row id: {raw_data.id}")
             try:
                 suburb_id = self.process_suburb(
                     raw_data.state_and_territory, raw_data.suburb, raw_data.postcode)

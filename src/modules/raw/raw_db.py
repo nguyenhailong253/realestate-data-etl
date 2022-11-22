@@ -20,7 +20,6 @@ class RawDb:
             RAW_DATA_TABLE, self.schema, autoload=True, autoload_with=self.engine)
 
     def select_all(self):
-        # results = [{**row} for row in item]  # https://stackoverflow.com/a/56098483
         query = select([self.table]).where(
             and_(self.table.columns.off_market == True,
                  self.table.columns.etl_done == False,

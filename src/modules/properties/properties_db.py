@@ -19,12 +19,9 @@ class PropertiesDb:
         return Table(
             REAL_ESTATE_PROPERTIES_TABLE, self.schema, autoload=True, autoload_with=self.engine)
 
-    def select_one(self,
-                   address_id: int,
-                   id_on_tenantapp: str) -> int:
+    def select_one(self, address_id: int) -> int:
         query = select([self.table.columns.id]).where(
-            and_(self.table.columns.address_id == address_id,
-                 self.table.columns.id_on_tenantapp == id_on_tenantapp))
+            self.table.columns.address_id == address_id)
         return self.conn.execute(query).first()
 
     def insert_one(self, property_data: dict) -> int:
