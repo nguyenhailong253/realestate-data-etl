@@ -112,7 +112,13 @@ class Etl:
         rows = self.rawDb.select_all()
         print(f"Found {len(rows)} rows without ETL done\n")
         count = 0
+
+        # 59 d minutes from now - due to 1hr time limit on CircleCI Free Plan
+        timeout = time.time() + 60*59
         for row in rows:
+            if time.time() > timeout:
+                print(f"Reaching time limit, stopping now...")
+                break
             count += 1
             start_time = time.time()
             raw_data = RawListing(**row)
