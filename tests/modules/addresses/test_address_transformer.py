@@ -95,7 +95,23 @@ def address_transformer(mocker):
 
         # Address with mispelled street type
         ("3B Woodfield Boulevarde, CARINGBAH", None,
-         "3B", "Woodfield", "Boulevard", "Bvd")
+         "3B", "Woodfield", "Boulevard", "Bvd"),
+
+        # Address where road name has direction (N, S, E, W), should ignore the direction
+        ("5/1 Goodrich Road West, MURRUMBA DOWNS",
+         "5", "1", "Goodrich", "Road", "Rd"),
+        ("ID:21089325/165 Ekibin Road East, Tarragindi",
+         "21089325", "165", "Ekibin", "Road", "Rd"),
+        ("58 Grace Street South", None, "58", "Grace", "Street", "St"),
+        ("1/28 Belmont Avenue Nth, Glen Iris",
+         "1", "28", "Belmont", "Avenue", "Ave"),
+
+        # Address where street type has non-alphanumeric characters
+        ("12 Denman Drive., Point Cook", None, "12", "Denman", "Drive", "Dr"),
+        ("9 Gregory Street., VICTORY HEIGHTS",
+         None, "9", "Gregory", "Street", "St"),
+        (" 43/2A Tangarra St East., Croydon Park",
+         "43", "2A", "Tangarra", "Street", "St")
     ]
 )
 def test_normalise_street_data(address_transformer, raw_address, unit_num, street_num, street_name, street_type, street_abbrev):

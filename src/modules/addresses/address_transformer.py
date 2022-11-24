@@ -33,6 +33,15 @@ REDUNDANT_WORDS = [
 
 GPS_TEXT = "GPS Location:"
 
+ROAD_DIR = {
+    'n': 'north',
+    'nth': 'north',
+    's': 'south',
+    'sth': 'south',
+    'e': 'east',
+    'w': 'west',
+}
+
 
 class AddressTransformer:
     def __init__(self, db: AddressesDb):
@@ -105,12 +114,14 @@ class AddressTransformer:
                 f"Address has no street name or street type: {address.display_address}")
         self.set_unit_and_street_numbers(address, address_components[0])
 
-        # try:
-        self.set_street_type(address, address_components[-1])
-        self.set_street_name(address, (address_components[1:-1]))
-        # except ValueError as e:
-        # if last word is not street type (i.e street type can't be found), then the whole thing is street name
-        # self.set_street_name(address, (address_components[1:]))
+        # Remove non-alphanumeric chars
+        address_components[-1] = re.sub(r'\W+', '', address_components[-1])
+        if address_components[-1].lower() in ROAD_DIR.keys() or address_components[-1].lower() in ROAD_DIR.values():
+            self.set_street_type(address, address_components[-2])
+            self.set_street_name(address, (address_components[1:-2]))
+        else:
+            self.set_street_type(address, address_components[-1])
+            self.set_street_name(address, (address_components[1:-1]))
 
     def set_latitude_longitude_data(self, gps_coordinates: str, address: Address):
         # Latitude comes first, then longitude
