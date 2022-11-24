@@ -7,6 +7,6 @@ class StateTransformer:
 
     def get_state_id(self, raw_state: str) -> int:
         for state in self.db.states:
-            if raw_state.upper() == state['state_code'] or raw_state.upper() == state['state_name']:
+            if raw_state.upper() == state['state_code'] or raw_state.title() == state['state_name']:
                 return state['id']
         raise ValueError(f"Cannot find state id for raw state: {raw_state}")
