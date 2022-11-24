@@ -1,3 +1,4 @@
+import difflib
 import re
 from typing import List
 
@@ -5,6 +6,7 @@ from src.modules.addresses.addresses_db import AddressesDb
 from src.modules.addresses.address_dataclass import Address
 from src.modules.addresses.street_type_abbrev import STREET_TYPES
 
+from src.utils.get_key_from_value import get_key_from_value
 
 REDUNDANT_WORDS = [
     r'level(\d+)/',
@@ -21,7 +23,7 @@ REDUNDANT_WORDS = [
     'flat',
     'cp lot',
     'berth',
-    'at',
+    r'\sat\s',
     'the studio',
     'shop',
     'xx',
@@ -42,7 +44,7 @@ class AddressTransformer:
         for word in REDUNDANT_WORDS:
             address_without_suburb = re.sub(
                 word, "", address_without_suburb.lower()).strip()
-            print(f"Removing {word}, left with {address_without_suburb}")
+            # print(f"Removing {word}, left with {address_without_suburb}")
         return " ".join(address_without_suburb.split())
 
     def set_unit_and_street_numbers(self, address: Address, unit_street: str):
@@ -64,7 +66,14 @@ class AddressTransformer:
                 address.street_type = value
                 address.street_type_abbrev = key
         try:
+            closest_match = difflib.get_close_matches(
+                street_type, STREET_TYPES.values(), n=1, cutoff=0.8)
+            if len(closest_match) > 0:
+                address.street_type = closest_match[0]
+                address.street_type_abbrev = get_key_from_value(
+                    STREET_TYPES, closest_match[0])
             address.street_type
+            address.street_type_abbrev
         except AttributeError as e:
             print(
                 f"Cannot find street type for {street_type} in address {address.display_address}: {e}")
@@ -91,7 +100,9 @@ class AddressTransformer:
         address_components = raw_address.split(" ")
         print(
             f"Normalising address - address components: {address_components}")
-
+        if len(address_components) == 2:
+            raise ValueError(
+                f"Address has no street name or street type: {address.display_address}")
         self.set_unit_and_street_numbers(address, address_components[0])
 
         # try:

@@ -2,6 +2,7 @@ STREET_TYPES = {
     # https://www.stylemanual.gov.au/grammar-punctuation-and-conventions/names-and-terms/australian-place-names
     # https://meteor.aihw.gov.au/content/270020
     # https://meteor.aihw.gov.au/content/429840
+    # https://api-doc.cacheinvest.com.au/street_type_guideline.html
     'Accs': 'Access',
     'Ally': 'Alley',
     'Alwy': 'Alleyway',
@@ -31,6 +32,7 @@ STREET_TYPES = {
     'Con': 'Concourse',
     'Cps': 'Copse',
     'Crn': 'Corner',
+    'Cso': 'Corso',
     'Ct': 'Court',
     'Ctyd': 'Courtyard',
     'Cove': 'Cove',
@@ -96,6 +98,7 @@ STREET_TYPES = {
     'Prom': 'Promenade',
     'Pl': 'Place',
     'Qdrt': 'Quadrant',
+    'Qy': 'Quay',
     'Qys': 'Quays',
     'Rmbl': 'Ramble',
     'Rest': 'Rest',
@@ -112,6 +115,7 @@ STREET_TYPES = {
     'Spur': 'Spur',
     'Sq': 'Square',
     'St': 'Street',
+    'Strp': 'Strip',
     'Sbwy': 'Subway',
     'Tarn': 'Tarn',
     'Tce': 'Terrace',

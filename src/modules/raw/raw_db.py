@@ -23,7 +23,7 @@ class RawDb:
         query = select([self.table]).where(
             and_(self.table.columns.off_market == True,
                  self.table.columns.etl_done == False,
-                 self.table.columns.ad_removed_date != None))  # .limit(1)
+                 self.table.columns.ad_removed_date != None))  # .limit(10)
         return self.conn.execute(query).fetchall()
 
     def update_etl_done_flag(self, raw_listing_id: int):

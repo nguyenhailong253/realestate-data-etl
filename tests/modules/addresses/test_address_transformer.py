@@ -89,8 +89,13 @@ def address_transformer(mocker):
         ("Room 4/1 McIntosh Crescent, Armidale",
          "4", "1", "Mcintosh", "Crescent", "Cres"),
 
+        # Address with "... bedroom"
         ("Three Bedroom/141 Campbell Street, Bowen Hills",
-         None, "141", "Campbell", "Street", "St")
+         None, "141", "Campbell", "Street", "St"),
+
+        # Address with mispelled street type
+        ("3B Woodfield Boulevarde, CARINGBAH", None,
+         "3B", "Woodfield", "Boulevard", "Bvd")
     ]
 )
 def test_normalise_street_data(address_transformer, raw_address, unit_num, street_num, street_name, street_type, street_abbrev):
@@ -118,6 +123,33 @@ def test_normalise_street_data_raise_exceptions(address_transformer, raw_address
         address = Address()
         address.display_address = raw_address
         address_transformer.normalise_street_data(address)
+
+
+@pytest.mark.parametrize(
+    "street_type, abbrev",
+    [
+        ("Boulevarde", "Bvd"),
+        ("Stret", "St"),
+    ]
+)
+def test_set_street_type_success_with_minor_mispelled(address_transformer, street_type, abbrev):
+    address = Address()
+    address_transformer.set_street_type(address, street_type)
+
+    assert address.street_type_abbrev == abbrev
+
+
+@pytest.mark.parametrize(
+    "street_type",
+    [
+        ("Test"),
+        ("Not a type"),
+    ]
+)
+def test_set_street_type_raise_exceptions(address_transformer, street_type):
+    with pytest.raises(AttributeError):
+        address = Address()
+        address_transformer.set_street_type(address, street_type)
 
 
 @pytest.mark.parametrize(

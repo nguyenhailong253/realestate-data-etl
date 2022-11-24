@@ -120,10 +120,13 @@ class ListingTransformer:
         Args:
             listing (Listing): listing to be insterted to DB
         """
-        price_per_day = int(listing.price_per_week)/NUM_DAYS_IN_A_WEEK
-        price_per_year = price_per_day * NUM_DAYS_IN_A_YEAR
-        price_per_month = price_per_year/NUM_MONTHS_IN_A_YEAR
-        listing.price_per_month = str(round(price_per_month))
+        if listing.price_per_week:
+            price_per_day = int(listing.price_per_week)/NUM_DAYS_IN_A_WEEK
+            price_per_year = price_per_day * NUM_DAYS_IN_A_YEAR
+            price_per_month = price_per_year/NUM_MONTHS_IN_A_YEAR
+            listing.price_per_month = str(round(price_per_month))
+        else:
+            listing.price_per_month = None
 
     def parse_datetime_to_date(self,
                                datetime_data: str,

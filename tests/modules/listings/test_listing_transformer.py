@@ -57,12 +57,19 @@ def test_set_price_per_week(listing_transformer, raw_price, price_per_week):
     assert listing.price_per_week == price_per_week
 
 
-def test_set_price_per_month(listing_transformer):
+@pytest.mark.parametrize(
+    "price_per_week, price_per_month",
+    [
+        ("300", "1304"),
+        (None, None),
+    ]
+)
+def test_set_price_per_month(listing_transformer, price_per_week, price_per_month):
     listing = Listing()
-    listing.price_per_week = "300"
+    listing.price_per_week = price_per_week
     listing_transformer.set_price_per_month(listing)
 
-    assert listing.price_per_month == "1304"
+    assert listing.price_per_month == price_per_month
 
 
 def test_parse_datetime_to_date(listing_transformer):

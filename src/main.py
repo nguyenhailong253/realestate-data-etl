@@ -157,6 +157,8 @@ class Etl:
                     f"Done ETL for id: {raw_data.property_id}, at row id: {raw_data.id}, took {time.time() - start_time}s")
                 print("=================================================")
             except Exception as e:
+                if "Address has no numeric values for unit or street number" in str(e) or "Address has no street name or street type" in str(e):
+                    self.mark_raw_data_as_processed(raw_data.id)
                 print(
                     f"Failed to process data for property id: {raw_data.property_id}, at row id: {raw_data.id} with address: {raw_data.address}\n{e}")
 
