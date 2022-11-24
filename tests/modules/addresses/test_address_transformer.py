@@ -88,6 +88,9 @@ def address_transformer(mocker):
         # Address with "Room"
         ("Room 4/1 McIntosh Crescent, Armidale",
          "4", "1", "Mcintosh", "Crescent", "Cres"),
+
+        ("Three Bedroom/141 Campbell Street, Bowen Hills",
+         None, "141", "Campbell", "Street", "St")
     ]
 )
 def test_normalise_street_data(address_transformer, raw_address, unit_num, street_num, street_name, street_type, street_abbrev):

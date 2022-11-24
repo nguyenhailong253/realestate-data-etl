@@ -92,3 +92,8 @@ create table if not exists transformed.real_estate_agencies (
 
 -- need to create index for each foreign key
 create index idx_property_id on raw.propertylistings(property_id)
+
+
+UPDATE transformed.addresses
+SET street_number = 141, street_name = 'Campbell'
+WHERE id = 2045;

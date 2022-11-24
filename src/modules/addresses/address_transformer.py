@@ -11,6 +11,7 @@ REDUNDANT_WORDS = [
     r'level (\d+)/',
     r'level (\d+) at',
     r'(\d+) bedroom/',
+    r'(.* bedroom/)',
     r'the studio -',
     r'l(\d+)',
     r'(\d+)bed/',
@@ -41,7 +42,7 @@ class AddressTransformer:
         for word in REDUNDANT_WORDS:
             address_without_suburb = re.sub(
                 word, "", address_without_suburb.lower()).strip()
-            # print(f"Removing {word}, left with {address_without_suburb}")
+            print(f"Removing {word}, left with {address_without_suburb}")
         return " ".join(address_without_suburb.split())
 
     def set_unit_and_street_numbers(self, address: Address, unit_street: str):
